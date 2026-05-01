@@ -4,7 +4,7 @@ import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
-import { Clock, CheckCircle2, Paperclip } from 'lucide-react';
+import { Clock, CheckCircle2, Paperclip, Trash2 } from 'lucide-react';
 import { getSocket } from '../services/socket';
 
 export default function Tasks() {
@@ -45,6 +45,17 @@ export default function Tasks() {
       fetchTasks();
     } catch (err) {
       toast.error('Failed to update status');
+    }
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    try {
+      await api.delete(`/tasks/${taskId}`);
+      toast.success('Task deleted');
+      fetchTasks();
+    } catch (err) {
+      toast.error('Failed to delete task');
     }
   };
 
@@ -122,6 +133,15 @@ export default function Tasks() {
                       <option value="in-progress">In Progress</option>
                       <option value="completed">Completed</option>
                     </select>
+                    {user?.role === 'Admin' && (
+                      <button
+                        onClick={() => handleDeleteTask(task._id)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-xs font-medium text-red-400 hover:bg-red-500/20 transition-colors w-full justify-center sm:w-auto mt-2 sm:mt-0"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               </li>

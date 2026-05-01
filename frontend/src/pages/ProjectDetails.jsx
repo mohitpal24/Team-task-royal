@@ -5,7 +5,7 @@ import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
-import { Plus, Clock, Users, User, ScrollText, Paperclip } from 'lucide-react';
+import { Plus, Clock, Users, User, ScrollText, Paperclip, Trash2 } from 'lucide-react';
 import Modal from '../components/Modal';
 import { getSocket } from '../services/socket';
 
@@ -86,6 +86,17 @@ export default function ProjectDetails() {
       fetchProjectAndTasks();
     } catch (err) {
       toast.error('Failed to reassign task');
+    }
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    try {
+      await api.delete(`/tasks/${taskId}`);
+      toast.success('Task deleted');
+      fetchProjectAndTasks();
+    } catch (err) {
+      toast.error('Failed to delete task');
     }
   };
 
@@ -268,6 +279,15 @@ export default function ProjectDetails() {
                         </label>
                         {uploadingTask === task._id && (
                           <span className="text-xs text-gray-400">Uploading...</span>
+                        )}
+                        {user?.role === 'Admin' && (
+                          <button
+                            onClick={() => handleDeleteTask(task._id)}
+                            className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-red-400 transition hover:bg-red-500/20 ml-auto"
+                          >
+                            <Trash2 size={14} />
+                            Delete Task
+                          </button>
                         )}
                       </div>
                     )}
