@@ -3,7 +3,7 @@ import Layout from '../components/layout/Layout';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { Plus, FolderKanban } from 'lucide-react';
+import { Plus, FolderKanban, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import Modal from '../components/Modal';
@@ -40,6 +40,19 @@ export default function Projects() {
       fetchProjects();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to create project');
+    }
+  };
+
+  const handleDeleteProject = async (e, projectId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this royal edict?')) return;
+    try {
+      await api.delete(`/projects/${projectId}`);
+      toast.success('Project deleted');
+      fetchProjects();
+    } catch (err) {
+      toast.error('Failed to delete project');
     }
   };
 
@@ -80,7 +93,18 @@ export default function Projects() {
               <div className="glass-card rounded-2xl border-t border-l border-white/10 hover:border-royal-gold/40 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,175,55,0.15)] transition-all duration-300 overflow-hidden group">
                 <div className="p-6 relative">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-royal-gold/5 rounded-full blur-2xl group-hover:bg-royal-gold/10 transition-colors"></div>
-                  <h3 className="text-xl font-serif font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 truncate mb-3">{project.name}</h3>
+                  {user?.role === 'Admin' && (
+                    <div className="absolute top-4 right-4 z-10">
+                      <button
+                        onClick={(e) => handleDeleteProject(e, project._id)}
+                        className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Delete Project"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  )}
+                  <h3 className="text-xl font-serif font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 truncate mb-3 pr-8">{project.name}</h3>
                   <p className="text-sm text-gray-400 line-clamp-2 h-10">{project.description}</p>
                   <div className="mt-6 flex items-center justify-between text-xs font-medium text-royal-champagne border-t border-white/10 pt-4">
                     <span className="flex items-center gap-1 bg-royal-gold/10 px-3 py-1 rounded-full">{project.members?.length || 0} Members</span>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
@@ -11,6 +11,7 @@ import { getSocket } from '../services/socket';
 
 export default function ProjectDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -100,6 +101,17 @@ export default function ProjectDetails() {
     }
   };
 
+  const handleDeleteProject = async () => {
+    if (!window.confirm('Are you sure you want to delete this royal edict? This action cannot be undone.')) return;
+    try {
+      await api.delete(`/projects/${id}`);
+      toast.success('Project deleted successfully');
+      navigate('/projects');
+    } catch (err) {
+      toast.error('Failed to delete project');
+    }
+  };
+
   const handleCreateTask = async (e) => {
     e.preventDefault();
     try {
@@ -148,6 +160,15 @@ export default function ProjectDetails() {
               <div className="flex items-center gap-3 mb-2">
                 <ScrollText className="text-royal-gold w-6 h-6" />
                 <h3 className="text-xl font-serif font-medium text-gray-200">Royal Edict details</h3>
+                {user?.role === 'Admin' && (
+                  <button
+                    onClick={handleDeleteProject}
+                    className="ml-auto inline-flex items-center justify-center p-2 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all"
+                    title="Delete Project"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
               </div>
               <p className="mt-1 max-w-2xl text-sm text-gray-400 leading-relaxed">{project.description}</p>
             </div>
