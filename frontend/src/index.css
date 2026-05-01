@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-royal-900 text-gray-200 antialiased selection:bg-royal-gold selection:text-royal-900;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-bold tracking-wide text-white;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-royal-800/40 backdrop-blur-md border border-white/5 shadow-xl;
+  }
+  .glass-card {
+    @apply bg-royal-800/60 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+  .gold-gradient {
+    @apply bg-gradient-to-r from-royal-gold via-royal-amber to-royal-gold bg-[length:200%_auto] hover:bg-[position:right_center] transition-all duration-500 text-royal-900 font-semibold;
+  }
+  .gold-text-gradient {
+    @apply bg-gradient-to-r from-royal-champagne via-royal-gold to-royal-amber bg-clip-text text-transparent;
+  }
+}
